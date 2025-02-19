@@ -131,3 +131,5 @@ dist
 .env
 generate_password.js
 package-lock.json
+.vercel
+vercel.json

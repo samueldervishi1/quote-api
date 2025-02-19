@@ -1,9 +1,6 @@
 require("dotenv").config();
-const express = require("express");
 const axios = require("axios");
 const nodemailer = require("nodemailer");
-
-const app = express();
 
 const QUOTE_API_URL = process.env.QUOTE_API_URL;
 
@@ -52,14 +49,16 @@ async function sendEmail(quote) {
   }
 }
 
-app.get("/quote", async (req, res) => {
-  try {
-    const quote = await fetchQuote();
-    await sendEmail(quote);
-    res.json({ quote });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch quote or send email" });
+module.exports = async (req, res) => {
+  if (req.method === "GET") {
+    try {
+      const quote = await fetchQuote();
+      await sendEmail(quote);
+      res.status(200).json({ quote });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch quote or send email" });
+    }
+  } else {
+    res.status(405).json({ message: "Method Not Allowed" });
   }
-});
-
-module.exports = app;
+};
